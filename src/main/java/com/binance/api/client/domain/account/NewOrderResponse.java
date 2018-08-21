@@ -6,6 +6,7 @@ import com.binance.api.client.domain.OrderStatus;
 import com.binance.api.client.domain.OrderType;
 import com.binance.api.client.domain.TimeInForce;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.Collections;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.List;
@@ -51,7 +52,7 @@ public class NewOrderResponse {
 
   private OrderSide side;
 
-  private List<Trade> fills;
+  private List<Trade> fills = Collections.emptyList();
 
   /**
    * Transact time for this order.
@@ -159,24 +160,33 @@ public class NewOrderResponse {
   }
 
   public void setFills(List<Trade> fills) {
-    this.fills = fills;
+    if (fills == null) {
+      this.fills = Collections.emptyList();
+    } else {
+      this.fills = fills;
+    }
   }
 
   @Override
   public String toString() {
-    return new ToStringBuilder(this, BinanceApiConstants.TO_STRING_BUILDER_STYLE)
-        .append("symbol", symbol)
-        .append("orderId", orderId)
-        .append("clientOrderId", clientOrderId)
-        .append("transactTime", transactTime)
-        .append("price", price)
-        .append("origQty", origQty)
-        .append("executedQty", executedQty)
-        .append("status", status)
-        .append("timeInForce", timeInForce)
-        .append("type", type)
-        .append("side", side)
-        .append("fills", fills.stream().map(Object::toString).collect(Collectors.joining(", ")))
-        .toString();
+    final String fillsString = fills.stream()
+        .map(Object::toString)
+        .collect(Collectors.joining(", ", "[", "]"));
+
+    return "NewOrderResponse{" +
+        "symbol='" + symbol + '\'' +
+        ", orderId=" + orderId +
+        ", clientOrderId='" + clientOrderId + '\'' +
+        ", price='" + price + '\'' +
+        ", origQty='" + origQty + '\'' +
+        ", executedQty='" + executedQty + '\'' +
+        ", cummulativeQuoteQty='" + cummulativeQuoteQty + '\'' +
+        ", status=" + status +
+        ", timeInForce=" + timeInForce +
+        ", type=" + type +
+        ", side=" + side +
+        ", transactTime=" + transactTime +
+        ", fills=" + fillsString +
+        '}';
   }
 }
